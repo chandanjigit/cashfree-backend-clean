@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: "https://computerchachaportal.blogspot.com",
+  origin: "https://ccportalaadhar.blogspot.com/",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"]
 }));
