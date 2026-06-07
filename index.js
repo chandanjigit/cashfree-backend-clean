@@ -18,7 +18,7 @@ app.use(cors(corsOptions));
 app.post("/create-order", async (req, res) => {
   try {
     const response = await axios.post(
-      "https://api.cashfree.com/pg/orders",   // ✅ Production URL
+      "https://api.cashfree.com/pg/orders",
       {
         order_id: "order_" + Date.now(),
         order_amount: 15,
@@ -31,8 +31,8 @@ app.post("/create-order", async (req, res) => {
       },
       {
         headers: {
-          "x-client-id": process.env.CASHFREE_CLIENT_ID,   // Production Client ID
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY, // Production Secret Key
+          "x-client-id": process.env.CASHFREE_CLIENT_ID,
+          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
           "Content-Type": "application/json"
         }
       }
