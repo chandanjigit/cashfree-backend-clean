@@ -6,48 +6,66 @@ const app = express();
 
 app.use(express.json());
 
-// ✅ Blogger domain allow करें
-const corsOptions = {
+app.use(cors({
   origin: "https://mahekdhup.blogspot.com",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"]
-};
-app.use(cors(corsOptions));
+}));
 
-// Create Cashfree Order (Production)
 app.post("/create-order", async (req, res) => {
   try {
+
+    const orderData = {
+      order_id: "order_" + Date.now(),
+      order_amount: 15,
+      order_currency: "INR",
+      customer_details: {
+        customer_id: "cust_" + Date.now(),
+        customer_email: "test@example.com",
+        customer_phone: "9999999999"
+      }
+    };
+
     const response = await axios.post(
       "https://api.cashfree.com/pg/orders",
-      {
-        order_id: "order_" + Date.now(),
-        order_amount: 15,
-        order_currency: "INR",
-        customer_details: {
-          customer_id: "cust001",
-          customer_email: "test@example.com",
-          customer_phone: "9999999999"
-        }
-      },
+      orderData,
       {
         headers: {
+          "accept": "application/json",
+          "content-type": "application/json",
           "x-client-id": process.env.CASHFREE_CLIENT_ID,
           "x-client-secret": process.env.CASHFREE_SECRET_KEY,
-          "Content-Type": "application/json"
+          "x-api-version": "2023-08-01"
         }
       }
     );
 
-    console.log("Cashfree Response:", response.data);  // ✅ Debug log
-    res.json(response.data);
+    console.log("Cashfree Success:", response.data);
+
+    res.json({
+      payment_session_id: response.data.payment_session_id,
+      order_id: response.data.order_id
+    });
+
   } catch (error) {
-    console.error("Error:", error.response?.data || error.message);
-    res.status(500).json({ error: error.response?.data || "Payment failed" });
+
+    console.error(
+      "Cashfree Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      error: error.response?.data || error.message
+    });
   }
 });
 
-// Server start
+app.get("/", (req, res) => {
+  res.send("Cashfree Backend Running");
+});
+
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
