@@ -1,11 +1,18 @@
 const express = require("express");
 const axios = require("axios");
-const cors = require("cors");   // ✅ Browser से calls allow होंगे
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+
+// ✅ सिर्फ आपके Blogger domain को allow करें
+const corsOptions = {
+  origin: "https://mahekdhup.blogspot.com",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+};
+app.use(cors(corsOptions));
 
 // Create Cashfree Order (Production)
 app.post("/create-order", async (req, res) => {
