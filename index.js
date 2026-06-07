@@ -1,7 +1,24 @@
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+
+app.use(express.json());
+
+// ✅ Blogger domain allow करें
+const corsOptions = {
+  origin: "https://mahekdhup.blogspot.com",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+};
+app.use(cors(corsOptions));
+
+// Create Cashfree Order (Production)
 app.post("/create-order", async (req, res) => {
   try {
     const response = await axios.post(
-      "https://api.cashfree.com/pg/orders",
+      "https://api.cashfree.com/pg/orders",   // ✅ Production URL
       {
         order_id: "order_" + Date.now(),
         order_amount: 15,
@@ -14,8 +31,8 @@ app.post("/create-order", async (req, res) => {
       },
       {
         headers: {
-          "x-client-id": process.env.CASHFREE_CLIENT_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+          "x-client-id": process.env.CASHFREE_CLIENT_ID,   // Production Client ID
+          "x-client-secret": process.env.CASHFREE_SECRET_KEY, // Production Secret Key
           "Content-Type": "application/json"
         }
       }
@@ -27,4 +44,10 @@ app.post("/create-order", async (req, res) => {
     console.error("Error:", error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || "Payment failed" });
   }
+});
+
+// Server start
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
