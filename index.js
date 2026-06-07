@@ -1,17 +1,17 @@
 const express = require("express");
 const axios = require("axios");
-const cors = require("cors");   // ✅ नया जोड़ा गया
+const cors = require("cors");   // ✅ Browser से calls allow होंगे
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());   // ✅ अब browser से calls allow होंगे
+app.use(cors());
 
-// Create Cashfree Order
+// Create Cashfree Order (Production)
 app.post("/create-order", async (req, res) => {
   try {
     const response = await axios.post(
-      "https://sandbox.cashfree.com/pg/orders",
+      "https://api.cashfree.com/pg/orders",   // ✅ Production URL
       {
         order_id: "order_" + Date.now(),
         order_amount: 15,
@@ -24,8 +24,8 @@ app.post("/create-order", async (req, res) => {
       },
       {
         headers: {
-          "x-client-id": process.env.CASHFREE_CLIENT_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+          "x-client-id": process.env.CASHFREE_CLIENT_ID,   // Production Client ID
+          "x-client-secret": process.env.CASHFREE_SECRET_KEY, // Production Secret Key
           "Content-Type": "application/json"
         }
       }
